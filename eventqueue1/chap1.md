@@ -63,23 +63,23 @@ ISRに特有な制約が並んでいます。ISRで時間のかかる処理を�
 というわけで、まだまだ序文だけです。
 
 ## 関連サイト
-[Mbed OSのページ][Mbed OS]
-[EventQueueのTutorial][The EventQueue API]
-[Mbed対応Cypress製品のページ][mbed cypress]
+* [Mbed OSのページ][Mbed OS]
+* [EventQueueのTutorial][The EventQueue API]
+* [Mbed対応Cypress製品のページ][mbed cypress]
 
 ## 関連記事
-[EventQueueを使ってみたよ (1)][(1)]
-[EventQueueを使ってみたよ (2)][(2)]
-[EventQueueを使ってみたよ (3)][(3)]
-[EventQueueを使ってみたよ (4)][(4)]
-[EventQueueを使ってみたよ (5)][(5)]
-[EventQueueを使ってみたよ (6)][(6)]
-[EventQueueを使ってみたよ (7)][(7)]
-[EventQueueを使ってみたよ (8)][(8)]
-[EventQueueを使ってみたよ (9)][(9)]
+* [EventQueueを使ってみたよ (1)][(1)]
+* [EventQueueを使ってみたよ (2)][(2)]
+* [EventQueueを使ってみたよ (3)][(3)]
+* [EventQueueを使ってみたよ (4)][(4)]
+* [EventQueueを使ってみたよ (5)][(5)]
+* [EventQueueを使ってみたよ (6)][(6)]
+* [EventQueueを使ってみたよ (7)][(7)]
+* [EventQueueを使ってみたよ (8)][(8)]
+* [EventQueueを使ってみたよ (9)][(9)]
 
-[(1)]:https://qiita.com/noritan_org/items/89406171ea7bcef2a665
-[(2)]:https://qiita.com/noritan_org/items/ff72ae6a4398ba6d3432
+[(1)]:./chap1.md
+[(2)]:./chap2.md
 [(3)]:https://qiita.com/noritan_org/items/d8333c74fb8d2ef8a8de
 [(4)]:https://qiita.com/noritan_org/items/65d579f722002ea12a6c
 [(5)]:https://qiita.com/noritan_org/items/172ca6c62fe4b36767d4
