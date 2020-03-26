@@ -1,3 +1,4 @@
+# EventQueueを使ってみたよ (1)
 ---
 title: EventQueueを使ってみたよ (1)
 tags: mbed-os PSoC6 EventQueue
@@ -80,13 +81,13 @@ ISRに特有な制約が並んでいます。ISRで時間のかかる処理を�
 
 [(1)]:./chap1.md
 [(2)]:./chap2.md
-[(3)]:https://qiita.com/noritan_org/items/d8333c74fb8d2ef8a8de
-[(4)]:https://qiita.com/noritan_org/items/65d579f722002ea12a6c
-[(5)]:https://qiita.com/noritan_org/items/172ca6c62fe4b36767d4
-[(6)]:https://qiita.com/noritan_org/items/cc4a0ab2c6ff9c0aa5ec
-[(7)]:https://qiita.com/noritan_org/items/83d2728811220c2c44ad
-[(8)]:https://qiita.com/noritan_org/items/58316099f9ef45bc56bd
-[(9)]:https://qiita.com/noritan_org/items/fa35cc2e07c1841f5eb2
+[(3)]:./chap3.md
+[(4)]:./chap4.md
+[(5)]:./chap5.md
+[(6)]:./chap6.md
+[(7)]:./chap7.md
+[(8)]:./chap8.md
+[(9)]:./chap9.md
 [PSoC 6]:https://www.cypress.com/psoc6
 [Mbed OS]:https://www.mbed.com/platform/mbed-os/
 [mbed cypress]:https://os.mbed.com/teams/Cypress/
