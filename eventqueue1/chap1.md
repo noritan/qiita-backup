@@ -1,11 +1,10 @@
-# EventQueueを使ってみたよ (1)
-
 ---
 title: EventQueueを使ってみたよ (1)
 tags: mbed-os PSoC6 EventQueue
 author: noritan_org
 slide: false
 ---
+# EventQueueを使ってみたよ (1)
 
 [PSoC 6]で[Mbed OS]が[使える][mbed cypress]ようになったので、使い始めました。マルチタスクで動くのが便利だね。というわけで、[EventQueue]について調べてみました。
 
