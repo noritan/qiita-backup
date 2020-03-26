@@ -4,7 +4,10 @@ tags: mbed-os PSoC6 EventQueue
 author: noritan_org
 slide: false
 ---
-[前回の記事][(2)]では、[EventQueue]について[The EventQueue API] Tutorialでイベントループを作るところまで読んでみました。今回は、イベントループを使います。
+# EventQueueを使ってみたよ (3)
+
+[前回の記事][(2)]では、[EventQueue]について[The EventQueue API] Tutorialでイベントループを作るところまで読んでみました。
+今回は、イベントループを使います。
 
 ## 題材について
 
@@ -61,9 +64,13 @@ int main() {
 
 いよいよ、本格的なコードが出てきましたが、いくつか問題点がありました。
 
-このプログラム例では、押しボタンで操作を行いますが、[PSoC 6]の評価ボードでは`SW2`端子が定義されていません。代わりに`USER_BUTTON`を使いました。また、この端子にはプルアップ抵抗が必要なので、`sw`インスタンス生成時の引数に`PullUp`を加えました。
+このプログラム例では、押しボタンで操作を行いますが、[PSoC 6]の評価ボードでは`SW2`端子が定義されていません。
+代わりに`USER_BUTTON`を使いました。
+また、この端子にはプルアップ抵抗が必要なので、`sw`インスタンス生成時の引数に`PullUp`を加えました。
 
-このプログラム例では、`Thread::gettid()`という関数で現在実行中のスレッドIDを取り出しています。ところが、この関数は`deprecated`扱いになっています。ここでは、代わりに`ThisThread::get_id()`を使用します。
+このプログラム例では、`Thread::gettid()`という関数で現在実行中のスレッドIDを取り出しています。
+ところが、この関数は`deprecated`扱いになっています。
+ここでは、代わりに`ThisThread::get_id()`を使用します。
 
 > The above code executes two handler functions (`rise_handler` and `fall_handler`) in two different contexts:
 
@@ -73,16 +80,22 @@ int main() {
 
 > 1) `SW2`で立ち上がりエッジが検出されたら割り込みcontextで`rise_handler`が実行されます。
 
-> 2) In the context of the event loop's thread function when a falling edge is detected on `SW2` (`fall_handler`). `queue.event()` is called with `fall_handler` as an argument to specify that `fall_handler` will run in user context instead of interrupt context.
+> 2) In the context of the event loop's thread function when a falling edge is detected on `SW2` (`fall_handler`).
+> `queue.event()` is called with `fall_handler` as an argument to specify that `fall_handler` will run in user context instead of interrupt context.
 
-> 2) `SW2`で立ち下がりエッジが検出されたらイベントループのスレッドのcontextで`fall_handler`が実行されます。`fall_handler`を引数に持った`queue.event()`が呼び出され、`fall_handler`が割り込みcontextの代わりにユーザcontextで実行されます。
+> 2) `SW2`で立ち下がりエッジが検出されたらイベントループのスレッドのcontextで`fall_handler`が実行されます。
+> `fall_handler`を引数に持った`queue.event()`が呼び出され、`fall_handler`が割り込みcontextの代わりにユーザcontextで実行されます。
 
 これで、押しボタンの「押す」と「放す」の動作に割り込みが関連付けられ、それぞれ別のcontextで実行されるようになりました。
-`queue.event()`は、引数に指定したcallbackをキューに入れる動作をするcallbackを返します。ややこしいな。
 
-> This is the output of the above program on an FRDM-K64F board. We reset the board and pressed the SW2 button twice:
+`queue.event()`は、引数に指定したcallbackをキューに入れる動作をするcallbackを返します。
+ややこしいな。
 
-> このプログラムをFRDM-K64Fボードで実行した結果がこの出力です。ボードをリセットした後、SW2ボタンを二回押しました。
+> This is the output of the above program on an FRDM-K64F board.
+> We reset the board and pressed the SW2 button twice:
+
+> このプログラムをFRDM-K64Fボードで実行した結果がこの出力です。
+> ボードをリセットした後、SW2ボタンを二回押しました。
 
 ```plaintext
 Starting in context 20001fe0
@@ -102,7 +115,8 @@ rise_handler in context 00000000
 
 > When the user releases the button, `rise_handler` is executed immediately, and it displays `00000000`, indicating that the code ran in interrupt context.
 
-> ユーザがボタンを放したら、`rise_handler`が直ちに実行されます。このとき`00000000`が表示されていますが、これは割り込みcontextでコードが実行されたことを示します。
+> ユーザがボタンを離したら、`rise_handler`が直ちに実行されます。
+> このとき`00000000`が表示されていますが、これは割り込みcontextでコードが実行されたことを示します。
 
 という事なんですが、[PSoC 6]で実行してみたところ、こんな結果にはなりませんでした。
 
@@ -121,7 +135,8 @@ For more info, visit: https://mbed.com/s/error?error=0x80010133&tgt=CY8CKIT_062_
 -- MbedOS Error Info --
 ```
 
-ボタンを押した後の`fall_handler`は走ったようなのですが、ボタンを放した後、エラーで停止してしまい、`LED1`が ーーーー・・・・ というパターンで点滅を始めました。メッセージを読むと、ISR contextでMutexを使用したのが気に入らなかったようです。
+ボタンを押した後の`fall_handler`は走ったようなのですが、ボタンを放した後、エラーで停止してしまい、`LED1`が ーーーー・・・・ というパターンで点滅を始めました。
+メッセージを読むと、ISR contextでMutexを使用したのが気に入らなかったようです。
 
 実は、このプログラムに問題があることは、この後の部分で記述されているのですが、おそらくこの文書を書いた当時は、プログラムがエラーで停止するような動きにはならなかったのでしょう。
 
@@ -180,30 +195,30 @@ fall_handler in context 08005380
 
 
 ## 関連サイト
-[Mbed OSのページ][Mbed OS]
-[EventQueueのTutorial][The EventQueue API]
-[Mbed対応Cypress製品のページ][mbed cypress]
+* [Mbed OSのページ][Mbed OS]
+* [EventQueueのTutorial][The EventQueue API]
+* [Mbed対応Cypress製品のページ][mbed cypress]
 
 ## 関連記事
-[EventQueueを使ってみたよ (1)][(1)]
-[EventQueueを使ってみたよ (2)][(2)]
-[EventQueueを使ってみたよ (3)][(3)]
-[EventQueueを使ってみたよ (4)][(4)]
-[EventQueueを使ってみたよ (5)][(5)]
-[EventQueueを使ってみたよ (6)][(6)]
-[EventQueueを使ってみたよ (7)][(7)]
-[EventQueueを使ってみたよ (8)][(8)]
-[EventQueueを使ってみたよ (9)][(9)]
+* [EventQueueを使ってみたよ (1)][(1)]
+* [EventQueueを使ってみたよ (2)][(2)]
+* [EventQueueを使ってみたよ (3)][(3)]
+* [EventQueueを使ってみたよ (4)][(4)]
+* [EventQueueを使ってみたよ (5)][(5)]
+* [EventQueueを使ってみたよ (6)][(6)]
+* [EventQueueを使ってみたよ (7)][(7)]
+* [EventQueueを使ってみたよ (8)][(8)]
+* [EventQueueを使ってみたよ (9)][(9)]
 
-[(1)]:https://qiita.com/noritan_org/items/89406171ea7bcef2a665
-[(2)]:https://qiita.com/noritan_org/items/ff72ae6a4398ba6d3432
-[(3)]:https://qiita.com/noritan_org/items/d8333c74fb8d2ef8a8de
-[(4)]:https://qiita.com/noritan_org/items/65d579f722002ea12a6c
-[(5)]:https://qiita.com/noritan_org/items/172ca6c62fe4b36767d4
-[(6)]:https://qiita.com/noritan_org/items/cc4a0ab2c6ff9c0aa5ec
-[(7)]:https://qiita.com/noritan_org/items/83d2728811220c2c44ad
-[(8)]:https://qiita.com/noritan_org/items/58316099f9ef45bc56bd
-[(9)]:https://qiita.com/noritan_org/items/fa35cc2e07c1841f5eb2
+[(1)]:./chap1.md
+[(2)]:./chap2.md
+[(3)]:./chap3.md
+[(4)]:./chap4.md
+[(5)]:./chap5.md
+[(6)]:./chap6.md
+[(7)]:./chap7.md
+[(8)]:./chap8.md
+[(9)]:./chap9.md
 [PSoC 6]:https://www.cypress.com/psoc6
 [Mbed OS]:https://www.mbed.com/platform/mbed-os/
 [mbed cypress]:https://os.mbed.com/teams/Cypress/
