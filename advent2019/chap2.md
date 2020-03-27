@@ -16,7 +16,7 @@ slide: false
 
 [スターターキット][Grove Starter Kit]には、他のボードも入っています。その中で、一番大きいのが[**Grove LCD RGB Backlight**][Grove LCD RGB Backlight]です。
 
-![Grove LCD RGB Backlight](./GroveLedRgbBacklight.jpeg)
+![Grove LCD RGB Backlight](./GroveLcdRgbBacklight.jpeg)
 
 良く見かけるパラレルバスのボードとは違って、これは**I2C**インターフェイスの表示器です。
 これなら、[**Grove**][Grove]の4ピンコネクタにぴったりです。
