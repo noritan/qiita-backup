@@ -233,6 +233,11 @@ UserAllocatedEvent = 4 at 500
 つまり、ライブラリに問題があるため、思った通りの動作にならなかったという事ですか？
 
 
+## 追記 (2020-03-27)
+
+というわけで、cancel()によってperiodがリセットされるバグは、次の6.0.0バージョンで修正されるようです。
+
+
 ## 関連サイト
 * [Mbed OSのページ][Mbed OS]
 * [EventQueueのTutorial][The EventQueue API]
