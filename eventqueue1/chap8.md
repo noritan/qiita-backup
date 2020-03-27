@@ -4,7 +4,10 @@ tags: mbed-os PSoC6 EventQueue
 author: noritan_org
 slide: false
 ---
-[前回の記事][(7)]では、[EventQueue]について[The EventQueue API] Tutorialでメモリの分断が起こる可能性があるというところまで読んでみました。今回は、メモリの分断についてさらに考えます。
+# EventQueueを使ってみたよ (8)
+
+[前回の記事][(7)]では、[EventQueue]について[The EventQueue API] Tutorialでメモリの分断が起こる可能性があるというところまで読んでみました。
+今回は、メモリの分断についてさらに考えます。
 
 ## 題材について
 
@@ -84,7 +87,10 @@ func(4)
 call(5)=0
 ```
 
-EventQueueには、4イベント分のメモリ領域を確保しました。そこに2ワードしか必要としないイベントを4本入れてやると、メモリが分断されて、すべてのイベントが2ワードしか受け入れられなくなります。`queue.dispatch()`でイベントを実行してイベントを開放しても状況は変わりません。大きなメモリ領域を必要とする5番目のイベントは、キューに入れることができません。
+EventQueueには、4イベント分のメモリ領域を確保しました。
+そこに2ワードしか必要としないイベントを4本入れてやると、メモリが分断されて、すべてのイベントが2ワードしか受け入れられなくなります。
+`queue.dispatch()`でイベントを実行してイベントを開放しても状況は変わりません。
+大きなメモリ領域を必要とする5番目のイベントは、キューに入れることができません。
 
 ### イベントに関するさらなる情報（More about events）
 
@@ -94,7 +100,8 @@ EventQueueには、4イベント分のメモリ領域を確保しました。そ
 
 > The `EventQueue`, `Event` and `UserAllocatedEvent` classes in the `mbed-events` library offer a lot of features that this document does not cover, including calling functions with arguments, queueing functions to be called after a delay or queueing functions to be called periodically.
 
-> `mbed-events`ライブラリの`EventQueue`、`Event`、`UserAllocatedEvent`の各クラスは、多くの機能を提供しています。そこには、この文書で述べられていない、引数を伴った関数の呼び出し、遅れて呼び出される関数をキューに入れること、周期的に呼び出される関数をキューに入れること、が含まれています。
+> `mbed-events`ライブラリの`EventQueue`、`Event`、`UserAllocatedEvent`の各クラスは、多くの機能を提供しています。
+> そこには、この文書で述べられていない、引数を伴った関数の呼び出し、遅れて呼び出される関数をキューに入れること、周期的に呼び出される関数をキューに入れること、が含まれています。
 
 > The [README of the `mbed-events` library][mbed-events readme] shows more ways to use events and event queues.
 
@@ -134,30 +141,30 @@ queue.call(func3, 1, 2, 3); // requires 13 words of storage (9+4), so allocation
 
 
 ## 関連サイト
-[Mbed OSのページ][Mbed OS]
-[EventQueueのTutorial][The EventQueue API]
-[Mbed対応Cypress製品のページ][mbed cypress]
+* [Mbed OSのページ][Mbed OS]
+* [EventQueueのTutorial][The EventQueue API]
+* [Mbed対応Cypress製品のページ][mbed cypress]
 
 ## 関連記事
-[EventQueueを使ってみたよ (1)][(1)]
-[EventQueueを使ってみたよ (2)][(2)]
-[EventQueueを使ってみたよ (3)][(3)]
-[EventQueueを使ってみたよ (4)][(4)]
-[EventQueueを使ってみたよ (5)][(5)]
-[EventQueueを使ってみたよ (6)][(6)]
-[EventQueueを使ってみたよ (7)][(7)]
-[EventQueueを使ってみたよ (8)][(8)]
-[EventQueueを使ってみたよ (9)][(9)]
+* [EventQueueを使ってみたよ (1)][(1)]
+* [EventQueueを使ってみたよ (2)][(2)]
+* [EventQueueを使ってみたよ (3)][(3)]
+* [EventQueueを使ってみたよ (4)][(4)]
+* [EventQueueを使ってみたよ (5)][(5)]
+* [EventQueueを使ってみたよ (6)][(6)]
+* [EventQueueを使ってみたよ (7)][(7)]
+* [EventQueueを使ってみたよ (8)][(8)]
+* [EventQueueを使ってみたよ (9)][(9)]
 
-[(1)]:https://qiita.com/noritan_org/items/89406171ea7bcef2a665
-[(2)]:https://qiita.com/noritan_org/items/ff72ae6a4398ba6d3432
-[(3)]:https://qiita.com/noritan_org/items/d8333c74fb8d2ef8a8de
-[(4)]:https://qiita.com/noritan_org/items/65d579f722002ea12a6c
-[(5)]:https://qiita.com/noritan_org/items/172ca6c62fe4b36767d4
-[(6)]:https://qiita.com/noritan_org/items/cc4a0ab2c6ff9c0aa5ec
-[(7)]:https://qiita.com/noritan_org/items/83d2728811220c2c44ad
-[(8)]:https://qiita.com/noritan_org/items/58316099f9ef45bc56bd
-[(9)]:https://qiita.com/noritan_org/items/fa35cc2e07c1841f5eb2
+[(1)]:./chap1.md
+[(2)]:./chap2.md
+[(3)]:./chap3.md
+[(4)]:./chap4.md
+[(5)]:./chap5.md
+[(6)]:./chap6.md
+[(7)]:./chap7.md
+[(8)]:./chap8.md
+[(9)]:./chap9.md
 [PSoC 6]:https://www.cypress.com/psoc6
 [Mbed OS]:https://www.mbed.com/platform/mbed-os/
 [mbed cypress]:https://os.mbed.com/teams/Cypress/
