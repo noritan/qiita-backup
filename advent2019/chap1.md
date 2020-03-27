@@ -36,27 +36,32 @@ slide: false
 
 ## 必要なハードウェア
 
-**[CY8CKIT-042-BLE-A]**には、**Arduino**準拠コネクタが搭載されています。
-![CY8CKIT-042-BLE-A](./CY8CKIT-042-BLE-A.png)
-一方、[スターターキット][Grove Starter Kit]には、[Grove]コネクタが満載された**[Base Shield V2]**が入っていました。
-![Base Shield V2](./BaseShieldV2.jpeg)
-これを使えば、**[CY8CKIT-042-BLE-A]**でも**[Grove]**が使えるようになります。
+[**CY8CKIT-042-BLE-A**][CY8CKIT-042-BLE-A]には、**Arduino**準拠コネクタが搭載されています。
 
-あとは、**[Grove LED]**というボードにLEDを載せて**[Base Shield V2]**に接続したら準備完了です。
-あぁ、このキットには、赤青緑の三色のLEDが入っているけれど、**[Grove LED]**ボードは一つしか入っていないのですね。
+![CY8CKIT-042-BLE-A](./CY8CKIT-042-BLE-A.png)
+
+一方、[スターターキット][Grove Starter Kit]には、[**Grove**][Grove]コネクタが満載された[**Base Shield V2**][Base Shield V2]が入っていました。
+
+![Base Shield V2](./BaseShieldV2.jpeg)
+
+これを使えば、[**CY8CKIT-042-BLE-A**][CY8CKIT-042-BLE-A]でも[**Grove**][Grove]が使えるようになります。
+
+あとは、[**Grove LED**][Grove LED]というボードにLEDを載せて[**Base Shield V2**][Base Shield V2]に接続したら準備完了です。
+あぁ、このキットには、赤青緑の三色のLEDが入っているけれど、[**Grove LED**][Grove LED]ボードは一つしか入っていないのですね。
+
 ![Grove LED](./GroveLed.jpeg)
 
-ところで、**[Base Shield V2]**の沢山あるコネクタのどれに接続したらいいんでしょう？
+ところで、[**Base Shield V2**][Base Shield V2]の沢山あるコネクタのどれに接続したらいいんでしょう？
 
-![DSC_2251A.JPG](DSC_2251A.JPG)
+![DSC_2251A.JPG](./DSC_2251A.JPG)
 
-**[Base Shield V2]**には、シルク印刷で、それぞれのコネクタがどの信号に接続されるかが分かるようになっています。
+[**Base Shield V2**][Base Shield V2]には、シルク印刷で、それぞれのコネクタがどの信号に接続されるかが分かるようになっています。
 
 例えば、**A0**と書かれているコネクタには、A0とA1の二つの信号が接続されます。
 **Arduino**の場合、これらの信号はアナログ信号を意味するのですが、**PSoC**には関係ありません。
 A0がP3[0]に、A1がP3[1]に電気的に接続されていて、それを何に使うのかは**PSoC**によって決められます。
 
-**[Grove LED]**ボードは、A0が制御信号として使われて、A1は使われないようです。
+[**Grove LED**][Grove LED]ボードは、A0が制御信号として使われて、A1は使われないようです。
 このため、**PSoC**からP3[0]ピンを制御するとLEDが点滅します。
 
 
