@@ -10,22 +10,22 @@ slide: false
 
 ## Groveのキットを買いました
 
-もう半年以上も前になりますが、[スイッチサイエンス][Switch Science]さんで[Seeed Studio]さんが作っている**[Grove]**の[スターターキット][Grove Starter Kit]を買いました。
+もう半年以上も前になりますが、[スイッチサイエンス][Switch Science]さんで[Seeed Studio]さんが作っている[**Grove**][Grove]の[スターターキット][Grove Starter Kit]を買いました。
 **Arduino**準拠のハードウェアなので、きっと手持ちの評価ボードで簡単に使えるだろうという安易な気持ちからでした。
 
 ![Grove Starter Kit](./GroveStarterKit.jpeg)
 
-今年の一連の記事は、このスターターキットを**[CY8CKIT-042-BLE-A Bluetooth Low Energy Pioneer Kit][CY8CKIT-042-BLE-A]**で使ってみます。
+今年の一連の記事は、このスターターキットを[**CY8CKIT-042-BLE-A Bluetooth Low Energy Pioneer Kit**][CY8CKIT-042-BLE-A]で使ってみます。
 
 
 ## Groveとは
 
-私が考えるに、**[Grove]**というのは、ゆるいハードウェアの規格です。
+私が考えるに、[**Grove**][Grove]というのは、ゆるいハードウェアの規格です。
 4ピンのコネクタ形状が決められていて、そこにVCCとGNDと2本の信号線が通ります。
 ２本の信号線にはアナログでもディジタルでも通して使うことができます。
 ２本もあったら、I2CでもUARTでも通せるから十分だよね。
 
-もっと詳しい解説は、**[Grove]**本家にあたってください。
+もっと詳しい解説は、[**Grove**][Grove]本家にあたってください。
 
 
 ## 本プロジェクトで目指すゴール
