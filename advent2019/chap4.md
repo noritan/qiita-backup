@@ -4,30 +4,38 @@ tags: PSoC4 Grove 2SMPB-02E
 author: noritan_org
 slide: false
 ---
+# CY8CKIT-042-BLE-A で気圧を表示
+
 これは、[PSoC Advent Calendar 2019]の16日目に突っ込まれた記事です。
 
-[前回の記事][GBLChika]では、**[Grove]**の**[スターターキット][Grove Starter Kit]**に入っていた**[Grove LCD RGB Backlight]**というボードを使ってLEDドライバを操作しました。これまでに使ってきたLCD表示とLEDドライバは、**I2C**の**WRITE**シーケンスのみを使っています。つまり、**PSoC**からデータを送りつけてばかりだったわけです。今回は、これまた[スイッチサイエンス][Switch Science]で購入した**[絶対圧センサ評価モジュール][ssci PSensor]**からデータを取得して、**[Grove LCD RGB Backlight]**に表示します。
+[前回の記事][GBLChika]では、[**Grove**][Grove]の[**スターターキット**][Grove Starter Kit]に入っていた[**Grove LCD RGB Backlight**][Grove LCD RGB Backlight]というボードを使ってLEDドライバを操作しました。
+これまでに使ってきたLCD表示とLEDドライバは、**I2C**の**WRITE**シーケンスのみを使っています。
+つまり、**PSoC**からデータを送りつけてばかりだったわけです。
+今回は、これまた[スイッチサイエンス][Switch Science]で購入した[**絶対圧センサ評価モジュール**][ssci PSensor]からデータを取得して、[**Grove LCD RGB Backlight**][Grove LCD RGB Backlight]に表示します。
 
-![温度と気圧を表示](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/224737/949029f0-4ec7-02b9-ac59-6759e218f4e6.jpeg)
-
-
-##絶対圧センサ
-
-![絶対圧センサ](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/224737/920d0fda-ade8-465c-a954-7b85e365e2e4.jpeg)
-
-**[絶対圧センサ評価モジュール][ssci PSensor]**とは、気圧を測定してくれるセンサを搭載した**[Grove]**コネクタ対応のボードです。この基板の上には、[OMRON]製の缶詰になった(canned)**[2SMPB-02E]**という気圧センサとレギュレータなどが搭載されています。また、このセンサには、温度補償を行うための温度センサも内蔵しています。
+![温度と気圧を表示](./showTempAndPressure.jpeg)
 
 
-##気圧センサコンポーネント
+## 絶対圧センサ
+
+![絶対圧センサ](./absolutePressureModule.jpeg)
+
+[**絶対圧センサ評価モジュール**][ssci PSensor]とは、気圧を測定してくれるセンサを搭載した[**Grove**][Grove]コネクタ対応のボードです。
+この基板の上には、[OMRON]製の缶詰になった(canned)[**2SMPB-02E**][2SMPB-02E]という気圧センサとレギュレータなどが搭載されています。
+また、このセンサには、温度補償を行うための温度センサも内蔵しています。
+
+
+## 気圧センサコンポーネント
 
 これをどうやって操作するかと考えた結果、[前回の記事][GBLChika]と同じように、新たにコンポーネントを作成してしまう事にしました。
 
-![回路図](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/224737/4426684e-dc38-93c5-fa29-c14971e26e48.png)
+![回路図](./schematic4.png)
 
-**I2C Master**を操作するためのソフトウェアコンポーネントを作成しました。[前回の記事][GBLChika]と全く同じ考え方です。
+**I2C Master**を操作するためのソフトウェアコンポーネントを作成しました。
+[前回の記事][GBLChika]と全く同じ考え方です。
 
 
-###API
+### API
 このソフトウェア・コンポーネントには、以下の**API**を実装しました。
 
 |API|概要|
@@ -48,9 +56,10 @@ slide: false
 まだ、このプロジェクトで使用できるだけの**API**しか実装していません。
 
 
-###I2CのREADシーケンス
+### I2CのREADシーケンス
 
-このコンポーネントでは、**I2C**インターフェイスの**WRITE**シーケンスに加えて**READ**シーケンスを使用しています。そのために、内部関数I2C_SENSOR_ReceiveSequence()を定義して使用しています。
+このコンポーネントでは、**I2C**インターフェイスの**WRITE**シーケンスに加えて**READ**シーケンスを使用しています。
+そのために、内部関数I2C_SENSOR_ReceiveSequence()を定義して使用しています。
 
 ```c:I2C_SENSOR.c
 static uint32 I2C_SENSOR_ReceiveSequence(uint8 *rbuf, uint32 length) {
@@ -73,10 +82,13 @@ static uint32 I2C_SENSOR_ReceiveSequence(uint8 *rbuf, uint32 length) {
 }
 ```
 
-最初にステータスフラグをクリアします。そして、**I2C Master**に対して**READ**シーケンスを開始させます。そのあと、ステータスフラグの**READ_COMPLETE**フラグをポーリングして**READ**シーケンスの終了を検出します。最後に**READ**シーケンスで実際に受信したデータのバイト数を関数の返り値とします。
+最初にステータスフラグをクリアします。
+そして、**I2C Master**に対して**READ**シーケンスを開始させます。
+そのあと、ステータスフラグの**READ_COMPLETE**フラグをポーリングして**READ**シーケンスの終了を検出します。
+最後に**READ**シーケンスで実際に受信したデータのバイト数を関数の返り値とします。
 
 
-###メインルーチン
+### メインルーチン
 
 ここで使用したメインルーチンは、以下の通りです。
 
@@ -119,20 +131,34 @@ int main(void) {
 }
 ```
 
-使い方は、簡単です。まず、``I2C_SENSOR_Force()``でセンサに温度と気圧のデータを取得させます。データの取得までに少々時間がかかります。本来であれば、測定中フラグを監視して測定終了を待つところですが、ここでは、ソフトウェアディレイを使って１秒間待っています。
+使い方は、簡単です。
+まず、``I2C_SENSOR_Force()``でセンサに温度と気圧のデータを取得させます。
+データの取得までに少々時間がかかります。
+本来であれば、測定中フラグを監視して測定終了を待つところですが、ここでは、ソフトウェアディレイを使って１秒間待っています。
+
 取得したデータは、``I2C_SENSOR_ReadRawData()``でセンサから読みだしてコンポーネントに格納します。
-ここで取得したデータは、そのままでは使えません。センサが持っている補償データをもとに温度補償と非線形補償を加える必要があります。これらの計算を行うのが``I2C_SENSOR_GetTemperature()``と``I2C_SENSOR_GetPressure()``です。これらの関数は``double``で値を返すので、それをLCDに表示させたら一回分の表示が終了します。
+
+ここで取得したデータは、そのままでは使えません。
+センサが持っている補償データをもとに温度補償と非線形補償を加える必要があります。
+これらの計算を行うのが``I2C_SENSOR_GetTemperature()``と``I2C_SENSOR_GetPressure()``です。
+これらの関数は``double``で値を返すので、それをLCDに表示させたら一回分の表示が終了します。
 
 
-###LCDのカーソル動作が変だ
+### LCDのカーソル動作が変だ
 
-このプロジェクトを作成していて、**I2C_LCD**コンポーネントのカーソル移動API``I2C_LCD_Position()``がうまく機能していないことがわかりました。０行０桁に移動するには``I2C_LCD_Position(0,0)``とすれば良いはずなのですが、移動してくれません。**API**関数を見たところ、どうも実装されているコマンドが違っている様子です。
-仕方ないので、``I2C_LCD_Position(0, 0x80)``と妙な指定をして回避しました。１行目に移動するときは``I2C_LCD_Position(0, 0xA8)``としています。どうも、**I2C_LCD**コンポーネントも自前で作り直さなきゃいけないみたいですね。
+このプロジェクトを作成していて、**I2C_LCD**コンポーネントのカーソル移動API``I2C_LCD_Position()``がうまく機能していないことがわかりました。
+０行０桁に移動するには``I2C_LCD_Position(0,0)``とすれば良いはずなのですが、移動してくれません。
+**API**関数を見たところ、どうも実装されているコマンドが違っている様子です。
+
+仕方ないので、``I2C_LCD_Position(0, 0x80)``と妙な指定をして回避しました。
+１行目に移動するときは``I2C_LCD_Position(0, 0xA8)``としています。
+どうも、**I2C_LCD**コンポーネントも自前で作り直さなきゃいけないみたいですね。
 
 
-###補償計算がややこしい
+### 補償計算がややこしい
 
-**"main.c"**を見ると、簡単に使えてしまっているように見えますが、内部では、かなりの計算をこなしています。気圧を計算するためのややこしい部分はすべてコンポーネントが隠してしまったのでした。
+**"main.c"**を見ると、簡単に使えてしまっているように見えますが、内部では、かなりの計算をこなしています。
+気圧を計算するためのややこしい部分はすべてコンポーネントが隠してしまったのでした。
 
 ```c:I2C_SENSOR.c
 double I2C_SENSOR_GetTemperature(void) {
@@ -155,25 +181,31 @@ double I2C_SENSOR_GetPressure(void) {
 ```
 
 これらのAPI関数は、センサから取り出したデータを基に温度と気圧の補償計算を行います。
+
 これ以外にも、補償計算に使用する係数を計算するためのAPI関数がありますが、ユーザに見えないところで処理されています。
 
 
 ## GitHub リポジトリ
-[GitHub Repository][repository]
+* [GitHub Repository][repository]
 
-##関連サイト
-[32-bit Arm&reg; Cortex&reg;-M0 PSoCR 4][PSoC 4]
-[PSoCR 4 BLE (Bluetooth Smart)][PSoC 4 BLE]
-[スイッチサイエンスのスターターキットのページ][ssci Starter Kit]
-[スイッチサイエンスの絶対圧センサ評価モジュールのページ][ssci PSensor]
+## 関連サイト
+* [32-bit ArmR CortexR-M0 PSoCR 4][PSoC 4]
+* [PSoCR 4 BLE (Bluetooth Smart)][PSoC 4 BLE]
+* [スイッチサイエンスのスターターキットのページ][ssci Starter Kit]
+* [スイッチサイエンスの絶対圧センサ評価モジュールのページ][ssci PSensor]
 
-##関連記事
-[CY8CKIT-042-BLE-A でＬチカ][GLChika]
-[CY8CKIT-042-BLE-A でLCD表示][GLCDShow]
-[CY8CKIT-042-BLE-A でバックライト点灯][GBLChika]
-[CY8CKIT-042-BLE-A で気圧を表示][GBarometer]
-[CY8CKIT-042-BLE-A で気圧を送信][GBLE]
+## 関連記事
+* [CY8CKIT-042-BLE-A でＬチカ][GLChika]
+* [CY8CKIT-042-BLE-A でLCD表示][GLCDShow]
+* [CY8CKIT-042-BLE-A でバックライト点灯][GBLChika]
+* [CY8CKIT-042-BLE-A で気圧を表示][GBarometer]
+* [CY8CKIT-042-BLE-A で気圧を送信][GBLE]
 
+[GLChika]:./chap1.md
+[GLCDShow]:./chap2.md
+[GBLChika]:./chap3.md
+[GBarometer]:./chap4.md
+[GBLE]:./chap5.md
 [PSoC Advent Calendar 2019]:https://qiita.com/advent-calendar/2019/psoc
 [Switch Science]:https://www.switch-science.com/
 [Seeed Studio]:https://www.seeedstudio.com/
@@ -195,9 +227,4 @@ double I2C_SENSOR_GetPressure(void) {
 [ssci PSensor]:https://www.switch-science.com/catalog/5329/
 [OMRON]:https://www.omron.co.jp/
 [2SMPB-02E]:https://www.omron.co.jp/ecb/product-detail?partId=45066
-[GLChika]:https://qiita.com/noritan_org/items/705181191e5a3c2c0d4d
-[GLCDShow]:https://qiita.com/noritan_org/items/48156c31f635226dd94d
-[GBLChika]:https://qiita.com/noritan_org/items/3046ccca16c9522f0f5e
-[GBarometer]:https://qiita.com/noritan_org/items/eec39fe11af5cd78f091
-[GBLE]:https://qiita.com/noritan_org/items/a43a051c724f87066ae4
 [repository]:https://github.com/noritan/Advent2019
