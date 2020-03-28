@@ -4,26 +4,30 @@ tags: PSoC4 Grove PCA9632 led
 author: noritan_org
 slide: false
 ---
+# CY8CKIT-042-BLE-A でバックライト点灯
+
 これは、[PSoC Advent Calendar 2019]の10日目に突っ込まれた記事です。
 
-##LCD表示器にはバックライトがある
+## LCD表示器にはバックライトがある
 
-[前回の記事][GLcdShow]では、**[Grove]**の[スターターキット][Grove Starter Kit]に入っていた**[Grove LCD RGB Backlight]**というボードを使いました。
+[前回の記事][GLcdShow]では、[**Grove**][Grove]の[スターターキット][Grove Starter Kit]に入っていた[**Grove LCD RGB Backlight**][Grove LCD RGB Backlight]というボードを使いました。
 
-![Grove LCD RGB Backlight](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/224737/d8c9d692-915a-47a4-e3c3-2ff9efc8f017.jpeg)
+![Grove LCD RGB Backlight](./GroveLcdRgbBacklight.jpeg)
 
 今回も、このボードを使って実験を行います。
 
-このボードは、**[Grove LCD RGB Backlight]**という名前からもわかるようにバックライトを内蔵しています。ところが、どうやって使うんだか例によって回路図が無いのでわかりません。やっぱり、プログラム例を見るしかないのか。
+このボードは、[**Grove LCD RGB Backlight**][Grove LCD RGB Backlight]という名前からもわかるようにバックライトを内蔵しています。
+ところが、どうやって使うんだか例によって回路図が無いのでわかりません。
+やっぱり、プログラム例を見るしかないのか。
 
 
-##LEDドライバ
+## LEDドライバ
 
 で、基板を眺めていて、裏側に**I2C**バスに直接つながっているチップがいると気が付きました。
 
-![LEDドライバ](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/224737/4db52d7c-0c7a-f477-d25c-795d0ab5438e.jpeg)
+![LEDドライバ](./ledDriverPhoto.jpeg)
 
-この写真では全く見えませんが、マーキングの"9632"の文字を手掛かりに**[NXP]**の**[PCA9632]**というLEDドライバであるらしいことが分かりました。
+この写真では全く見えませんが、マーキングの"9632"の文字を手掛かりに[**NXP**][NXP]の[**PCA9632**][PCA9632]というLEDドライバであるらしいことが分かりました。
 
 [前回の記事][GLcdShow]で判明した**I2C**のSlaveアドレスとも符合します。
 
@@ -36,17 +40,23 @@ slide: false
 このLEDドライバには、二つのアドレスが見えています。
 これらのうち、0xC4が通常使用されるSlaveアドレスです。
 一方、0xE0の方は、"LED All Call I2C-bus Address"と呼ばれるもので、モード設定によって無効にすることもできます。
-このLEDドライバには、ほかにもサブアドレスが3種類設定できるなど機能が多いのですが、すべてvolatileとなっています。同一**I2C**バスに**[PCA9632]**を複数接続しても、個別に設定することができずに困ってしまうんじゃないのかな。
-ちなみに、**[PCA9632]**には10ピンパッケージのものもあり、増えた2ピンを使ってSlaveアドレスを変更できることができます。複数つなげるときには、こちらを使えば良いのでしょう。
+
+このLEDドライバには、ほかにもサブアドレスが3種類設定できるなど機能が多いのですが、すべてvolatileとなっています。
+同一**I2C**バスに[**PCA9632**][PCA9632]を複数接続しても、個別に設定することができずに困ってしまうんじゃないのかな。
+
+ちなみに、[**PCA9632**][PCA9632]には10ピンパッケージのものもあり、増えた2ピンを使ってSlaveアドレスを変更できることができます。
+複数つなげるときには、こちらを使えば良いのでしょう。
 
 
-##I2C Masterを直接操作する
+## I2C Masterを直接操作する
 
-今回は、[前回][GLcdShow]のプロジェクトを拡張して対応してみます。まず、回路図は、前回と同じです。
+今回は、[前回][GLcdShow]のプロジェクトを拡張して対応してみます。
+まず、回路図は、前回と同じです。
 
-![回路図](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/224737/e709aa2d-805d-b2b7-c124-bb90ed4feca8.png)
+![回路図](./schematic2.png)
 
-LEDドライバを制御する便利なコンポーネントは存在しないので、すべてソフトウェアで操作します。ソフトウェアは、こんなになりました。
+LEDドライバを制御する便利なコンポーネントは存在しないので、すべてソフトウェアで操作します。
+ソフトウェアは、こんなになりました。
 
 ```c:main.c
 #include "project.h"
@@ -104,31 +114,34 @@ int main(void) {
 }
 ```
 
-LCDディスプレイに文字を表示させてから、LEDドライバにコマンドを送り、 MODE1, LEDOUT, PWM の順にレジスタに値を書き込んでいきます。これで、バックライトがピンクに点灯します。
+LCDディスプレイに文字を表示させてから、LEDドライバにコマンドを送り、 MODE1, LEDOUT, PWM の順にレジスタに値を書き込んでいきます。
+これで、バックライトがピンクに点灯します。
 
-![バックライト点灯](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/224737/e88a4ca4-9568-34fc-4cf3-9a2a5f54b28a.jpeg)
+![バックライト点灯](./lcdDisplayWithBacklight.jpeg)
 
 **I2Cバス**にコマンドを送信する関数 SendBuffer() を定義しているので、多少はマシなはずですが、大したことやってるわけでもないのに、長いです。
 
-この先、可読性を考えるのであれば、MODE1レジスタを書き換える関数やら、LEDOUTレジスタを書き換える関数やら、PWMレジスタを書き換える関数やら、色んなものが考えられますが、ベタにmain.cに書くべきものじゃありません。ぜひとも、ライブラリ化したいところです。
+この先、可読性を考えるのであれば、MODE1レジスタを書き換える関数やら、LEDOUTレジスタを書き換える関数やら、PWMレジスタを書き換える関数やら、色んなものが考えられますが、ベタにmain.cに書くべきものじゃありません。
+ぜひとも、ライブラリ化したいところです。
 
 
-##LEDドライバを制御するコンポーネント
+## LEDドライバを制御するコンポーネント
 
 ということで、コンポーネントを作っちゃいました。
 
-![PCA9632コンポーネントを追加](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/224737/69d82772-3c2b-0eb6-ea29-8d0240d56868.png)
+![PCA9632コンポーネントを追加](./schematic3.png)
 
-このコンポーネントは、**Character LCD with I2C Interface**と同じように指定された**I2C Master**を介して**[PCA9632]**を制御するソフトウェアコンポーネントです。
+このコンポーネントは、**Character LCD with I2C Interface**と同じように,
+指定された**I2C Master**を介して[**PCA9632**][PCA9632]を制御するソフトウェアコンポーネントです。
 
 ただし、凝った設定画面は作っていないので、かなり質素です。
 
-![質素な設定画面](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/224737/49f2338b-bf33-c869-789b-96079328effc.png)
+![質素な設定画面](./ledDriverConfiguration.png)
 
 二つのパラメータ、Slaveアドレスと操作対象となる**I2C Master**コンポーネントのインスタンス名が設定されます。
 
 
-###API
+### API
 
 提供しているAPI関数は、以下の通りです。
 
@@ -143,10 +156,11 @@ LCDディスプレイに文字を表示させてから、LEDドライバにコ�
 |void I2C_LED_WriteLedout(uint8 ledout)|LEDOUTレジスタに値を書き込みます。|
 |void I2C_LED_WritePWM(uint8 pwm0, uint8 pwm1, uint8 pwm2, uint8 pwm3)|PWMレジスタに値を書き込みます。|
 
-これらの関数を使って、**[PCA9632]**を制御します。ほかにも色々と細かい設定はできるのですが、バックライトとしてはこのくらいで十分でしょう。
+これらの関数を使って、[**PCA9632**][PCA9632]を制御します。
+ほかにも色々と細かい設定はできるのですが、バックライトとしてはこのくらいで十分でしょう。
 
 
-###メインルーチン
+### メインルーチン
 
 コンポーネントを使って、メインルーチンを書き直しました。
 
@@ -172,23 +186,29 @@ int main(void) {
 }
 ```
 
-"main.c"は、すっかり簡素になりました。このプログラムでも、コンポーネントを作成しない場合と同じようにピンク色になります。
+"main.c"は、すっかり簡素になりました。
+このプログラムでも、コンポーネントを作成しない場合と同じようにピンク色になります。
 
 ## GitHub リポジトリ
-[GitHub Repository][repository]
+* [GitHub Repository][repository]
 
-##関連サイト
-[32-bit ArmR CortexR-M0 PSoCR 4][PSoC 4]
-[PSoCR 4 BLE (Bluetooth Smart)][PSoC 4 BLE]
-[スイッチサイエンスのスターターキットのページ][ssci Starter Kit]
+## 関連サイト
+* [32-bit ArmR CortexR-M0 PSoCR 4][PSoC 4]
+* [PSoCR 4 BLE (Bluetooth Smart)][PSoC 4 BLE]
+* [スイッチサイエンスのスターターキットのページ][ssci Starter Kit]
 
-##関連記事
-[CY8CKIT-042-BLE-A でＬチカ][GLChika]
-[CY8CKIT-042-BLE-A でLCD表示][GLCDShow]
-[CY8CKIT-042-BLE-A でバックライト点灯][GBLChika]
-[CY8CKIT-042-BLE-A で気圧を表示][GBarometer]
-[CY8CKIT-042-BLE-A で気圧を送信][GBLE]
+## 関連記事
+* [CY8CKIT-042-BLE-A でＬチカ][GLChika]
+* [CY8CKIT-042-BLE-A でLCD表示][GLCDShow]
+* [CY8CKIT-042-BLE-A でバックライト点灯][GBLChika]
+* [CY8CKIT-042-BLE-A で気圧を表示][GBarometer]
+* [CY8CKIT-042-BLE-A で気圧を送信][GBLE]
 
+[GLChika]:./chap1.md
+[GLCDShow]:./chap2.md
+[GBLChika]:./chap3.md
+[GBarometer]:./chap4.md
+[GBLE]:./chap5.md
 [PSoC Advent Calendar 2019]:https://qiita.com/advent-calendar/2019/psoc
 [Switch Science]:https://www.switch-science.com/
 [Seeed Studio]:https://www.seeedstudio.com/
@@ -207,9 +227,4 @@ int main(void) {
 [PCF2119X]:https://www.nxp.com/products/:PCF2119X
 [PCA9632]:https://www.nxp.com/products/:PCA9632
 [KitProg]:https://www.cypress.com/kitprog
-[GLChika]:https://qiita.com/noritan_org/items/705181191e5a3c2c0d4d
-[GLCDShow]:https://qiita.com/noritan_org/items/48156c31f635226dd94d
-[GBLChika]:https://qiita.com/noritan_org/items/3046ccca16c9522f0f5e
-[GBarometer]:https://qiita.com/noritan_org/items/eec39fe11af5cd78f091
-[GBLE]:https://qiita.com/noritan_org/items/a43a051c724f87066ae4
 [repository]:https://github.com/noritan/Advent2019
