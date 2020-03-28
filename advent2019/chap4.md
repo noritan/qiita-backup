@@ -59,7 +59,7 @@ slide: false
 ### I2CのREADシーケンス
 
 このコンポーネントでは、**I2C**インターフェイスの**WRITE**シーケンスに加えて**READ**シーケンスを使用しています。
-そのために、内部関数I2C_SENSOR_ReceiveSequence()を定義して使用しています。
+そのために、内部関数``I2C_SENSOR_ReceiveSequence()``を定義して使用しています。
 
 ```c:I2C_SENSOR.c
 static uint32 I2C_SENSOR_ReceiveSequence(uint8 *rbuf, uint32 length) {
@@ -157,7 +157,7 @@ int main(void) {
 
 ### 補償計算がややこしい
 
-**"main.c"**を見ると、簡単に使えてしまっているように見えますが、内部では、かなりの計算をこなしています。
+**"main.c"** を見ると、簡単に使えてしまっているように見えますが、内部では、かなりの計算をこなしています。
 気圧を計算するためのややこしい部分はすべてコンポーネントが隠してしまったのでした。
 
 ```c:I2C_SENSOR.c
