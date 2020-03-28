@@ -70,51 +70,56 @@ slide: false
 
 回路図は、必要なコンポーネントを並べただけです。
 
-![回路図](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/224737/e709aa2d-805d-b2b7-c124-bb90ed4feca8.png)
+![回路図](./schematic2.png)
 
-この**Character LCD with I2C Interface**というコンポーネントは、**I2C Master**を操作してLCDコントローラと通信をするソフトウェアコンポーネントです。そのため、外付けの**I2C Master**コンポーネントが別途必要です。
+この**Character LCD with I2C Interface**というコンポーネントは、**I2C Master**を操作してLCDコントローラと通信をするソフトウェアコンポーネントです。
+そのため、外付けの**I2C Master**コンポーネントが別途必要です。
 
 
-###I2C Masterの設定
+### I2C Masterの設定
 
 **I2C Master**の設定は、以下のようにしました。
 
-![I2C Masterの設定](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/224737/45f8bd79-c3e5-f9a3-2754-97d5e2618d40.png)
+![I2C Masterの設定](./i2cMasterConfiguration.png)
 
 |項目|設定|概要|
 |:--|:--|:--|
 |Name|I2CM|このインスタンスの名前です。|
 |Mode|Master|Slaveデバイスを制御します。|
 
-別途、端子の割り当てが必要です。**[CY8CKIT-042-BLE-A]**では、以下の端子が**SCL**と**SDA**に接続されています。
+別途、端子の割り当てが必要です。[**CY8CKIT-042-BLE-A**][CY8CKIT-042-BLE-A]では、以下の端子が**SCL**と**SDA**に接続されています。
 
-![I2CMの端子割り当て](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/224737/4ac54936-9468-263f-5f1d-36ad688af921.png)
+![I2CMの端子割り当て](./i2cmPinAssign.png)
 
 
 ###I2Cバスのプルアップは、どこ？
 
-通常、**I2C**バスを使用する時には、**SCL**, **SDA** 信号線にプルアップ抵抗を付ける必要があります。この実験でもプルアップ抵抗が必要になるはずなのですが、無くても動いてしまいます。これは、**[CY8CKIT-042-BLE-A]**のボード上に搭載されている**[KitProg]**がプルアップ抵抗を付けてくれるためです。
+通常、**I2C**バスを使用する時には、**SCL**, **SDA** 信号線にプルアップ抵抗を付ける必要があります。
+この実験でもプルアップ抵抗が必要になるはずなのですが、無くても動いてしまいます。
+これは、[**CY8CKIT-042-BLE-A**][CY8CKIT-042-BLE-A]ボード上に搭載されている[**KitProg**][KitProg]がプルアップ抵抗を付けてくれるためです。
 
-![プルアップ回路](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/224737/2c7e6d54-9cff-f417-2803-7ba853c01728.png)
+![プルアップ回路](./pullUpCircuit.png)
 
-このため、他のポートを**I2C**バスに使用する場合や、**USB**コネクタ以外から電源を供給する場合には、プルアップ抵抗を追加しなくてはなりません。**I2C**バスを使用する場合には、一般的に注意が必要です。
+このため、他のポートを**I2C**バスに使用する場合や、**USB**コネクタ以外から電源を供給する場合には、プルアップ抵抗を追加しなくてはなりません。
+**I2C**バスを使用する場合には、一般的に注意が必要です。
 
 
 ###LCDコントローラの設定
 
 **Character LCD with I2C Interface**の設定は、以下のようにしました。
 
-![LCDコントローラの設定](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/224737/385602da-cd48-5e6a-97e5-c06d1c0c0895.png)
+![LCDコントローラの設定](./lcdControllerConfiguration.png)
 
 |項目|設定|概要|
 |:--|:--|:--|
 |Name|I2C_LCD|このインスタンスの名前です。|
 |I2C master instance name|I2CM|操作対象である**I2C Master**の名前です。|
 |Default I2C address (8 bit)|0x7C|LCDコントローラのSlaveアドレスです。|
-|Command format|NXP PCF2119x + custom commands|ひとまず**[PCF2119x]**だと思って使います。|
+|Command format|NXP PCF2119x + custom commands|ひとまず[**PCF2119x**][PCF2119x]だと思って使います。|
 
 **I2C master instance name**には、先ほど作った**I2C Master**コンポーネントの名前を入れます。
-**Slaveアドレス**は、**[Bridge Control Panel]**が調べてくれたアドレスを"8 bit"フォーマットで入れます。
+
+**Slaveアドレス**は、[**Bridge Control Panel**][Bridge Control Panel]が調べてくれたアドレスを"8 bit"フォーマットで入れます。
 
 
 ###ソフトウェア
@@ -143,32 +148,33 @@ int main(void) {
 初期設定したら、0x3F ('0') から 0x6F ('o') までの48文字を送り込むだけのプログラムです。
 
 
-###うまく表示されない
+### うまく表示されない
 
 実行させてみましたが、うまく表示されませんでした。
 
-![うまく表示されない](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/224737/7996c992-8cee-decb-1fb0-c334210dc539.jpeg)
+![うまく表示されない](lcdDisplayFailure.jpeg)
 
 フォントが間違っているうえに1行しか表示されていません。
-つまり、LCDコントローラが**[PCF2119x]**ではないという事を意味しているのですね。
+つまり、LCDコントローラが[**PCF2119x**][PCF2119x]ではないという事を意味しているのですね。
 とはいえ、何かを表示させようとする努力は見られるので何とかなるでしょう。
 
 
-##Custom formatを使う
+## Custom formatを使う
 
-とりあえず、**[PCF2119x]**としては動いていないらしいので、"Custom format"設定を使って試してみました。
+とりあえず、[**PCF2119x**][PCF2119x]としては動いていないらしいので、"Custom format"設定を使って試してみました。
 
-![custom format設定](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/224737/0a686277-74b3-b80b-bdd9-06b32a8f3db4.png)
+![custom format設定](./customFormatConfiguration.png)
 
-![ちょっと良くなった](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/224737/c10cd4b2-5295-2dcb-594a-a42bd22da585.jpeg)
+![ちょっと良くなった](./lcdDisplayBetter.jpeg)
 
 フォントの乱れは無くなりました。が、2行表示になりません。
 
 "Custom format"に設定すると、"Custom Command"タブにデフォルトのコマンド情報が入り、変更できるようになります。
 
-![Custom Commandタブ](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/224737/d5d1508a-a099-338e-df6a-4857dbc1fdb8.png)
+![Custom Commandタブ](./customCommandTab.png)
 
-これらのコマンドを見ていて、"Set display for 2 lines and 16 characters"というコマンドを見つけました。設定値は、0x24となっています。これは、"Function_set"というコマンドで、**[PCF2119x]**のデータシートでは以下のように書かれています。
+これらのコマンドを見ていて、"Set display for 2 lines and 16 characters"というコマンドを見つけました。設定値は、0x24となっています。
+これは、"Function_set"というコマンドで、[**PCF2119x**][PCF2119x]のデータシートでは以下のように書かれています。
 
 |Instruction|RS|R/W|bit7|bit6|bit5|bit4|bit3|bit2|bit1|bit0|
 |:--|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
@@ -179,7 +185,7 @@ M: 表示行数 0:1-line 1:2-line
 SL: multiplexモード 0:18-multiplex 1:9-multiplex
 H: 命令セット 0:標準命令 1:拡張命令
 
-**I2C**の場合には、DLは関係ないので、**[PCF2119x]**であれば、確かに2行表示ができる設定です。
+**I2C**の場合には、DLは関係ありません。[**PCF2119x**][PCF2119x]であれば、確かに2行表示ができる設定です。
 
 これに対して、一般的な**HD44780 (SC1602)**コントローラのコマンドを調べると、このようになっていました。
 
@@ -192,11 +198,12 @@ N: 表示行数 0:1-line 1:2-line
 F: フォントのドット数 0:5x8 1:5x10
 
 比較してみるとわかりますが、2行表示設定にするためのビット位置が異なっています。
-もし、このLCDコントローラのコマンド体系が**HD44780 (SC1602)**同等だったとすると、0x24を送ると1-line, 5x10フォントという妙な設定になってしまいます。2行表示をしたいのであれば、0x28を送らなくてはなりません。コマンドを0x28に変更してみました。
+もし、このLCDコントローラのコマンド体系が**HD44780 (SC1602)**同等だったとすると、0x24を送ると1-line, 5x10フォントという妙な設定になってしまいます。
+2行表示をしたいのであれば、0x28を送らなくてはなりません。コマンドを0x28に変更してみました。
 
-![コマンドの修正](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/224737/bb0cc285-0954-814b-50e9-947a85fcb8ae.png)
+![コマンドの修正](./customCommandTabRevised.png)
 
-![思った通りの出力](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/224737/081e3db9-d748-a2db-c6a1-7cd9069956c1.jpeg)
+![思った通りの出力](./lcdDisplayExpected.jpeg)
 
 すると、思った通りの出力になりました。
 
