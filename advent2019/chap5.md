@@ -122,7 +122,7 @@ BLEビーコンは、自分の都合でパケットを送信すればよいの�
 ## アプリはどうする？
 
 BLEビーコンは温度と気圧の情報を送信してくれますが、これを受信するにはアプリを作るか、受信用のハードを作成する必要があります。
-今回は、そこまでは作成せずに、[**CYALKIT-E02 Solar-Powered BLE Sensor Beacon Reference Design Kit (RDK)**][CYALKIT-E02]で使用されている**Cypress&reg; BLE-Beacon&trade;**アプリケーションを使用します。
+今回は、そこまでは作成せずに、[**CYALKIT-E02 Solar-Powered BLE Sensor Beacon Reference Design Kit (RDK)**][CYALKIT-E02]で使用されている**Cypress&reg; BLE-Beacon&trade;** アプリケーションを使用します。
 
 とはいっても、このアプリは温度と湿度を表示させるために用意されているので気圧には対応していません。
 そこで、湿度を表示させる代わりに気圧を表示させることにしました。
@@ -149,7 +149,7 @@ BLEビーコンは温度と気圧の情報を送信してくれますが、こ�
 
 ### アプリで見てみたら
 
-**Cypress&reg; BLE-Beacon&trade;**で表示させました。
+**Cypress&reg; BLE-Beacon&trade;** で表示させました。
 このアプリには、グラフ表示をさせる機能もあるのですが、温度と気圧は頻繁に変わるものでもないため、リスト表示させました。
 
 ![アプリの表示](./applicationDisplay.png)
